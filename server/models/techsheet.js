@@ -11,7 +11,8 @@ var TechSheetSchema = new mongoose.Schema({
     required: true,
     minlength: 1,
     trim: true,
-    uppercase: true
+    uppercase: true,
+    unique: true
   },
   speciesName: {
     type: String,

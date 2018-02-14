@@ -15,18 +15,9 @@ var port = process.env.PORT;
 
 app.use(bodyParser.json());
 
-app.post(`/techsheets`, (req, res) => {
-  var ts = new TechSheet({
-    _brand: req.body._brand,
-    varietyName: req.body.varietyName,
-    speciesName: req.body.speciesName,
-    keyFeatures: req.body.keyFeatures,
-    briefDescription: req.body.briefDescription,
-    seedingRate: req.body.seedingRate,
-    adaptation: req.body.adaptation,
-    modified: req.body.modified,
-    lastModified: req.body.lastModified
-  });
+app.post(`/techsheets`, authenticate, (req, res) => {
+  var body = _.pick(req.body, ['_brand', 'varietyName', 'speciesName', 'keyFeatures', 'briefDescription', 'seedingRate', 'adaptation', 'modified', 'lastModified', '_creator']);
+  var ts = new TechSheet(body);
 
   ts.save().then((doc) => {
     res.send(doc);
@@ -108,19 +99,19 @@ app.post(`/techsheets`, (req, res) => {
 //   });
 // });
 //
-// // POST /users
-// app.post('/users', (req, res) => {
-//   var body = _.pick(req.body, ['email', 'password']);
-//   var user = new User(body);
-//
-//   user.save().then(() => {
-//     return user.generateAuthToken();
-//   }).then((token) => {
-//     res.header('x-auth', token).send(user);
-//   }).catch((e) => {
-//     res.status(400).send(e);
-//   });
-// });
+// POST /users
+app.post('/users', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password']);
+  var user = new User(body);
+
+  user.save().then(() => {
+    return user.generateAuthToken();
+  }).then((token) => {
+    res.header('x-auth', token).send(user);
+  }).catch((e) => {
+    res.status(400).send(e);
+  });
+});
 //
 //
 // app.get('/users/me', authenticate, (req, res) => {
